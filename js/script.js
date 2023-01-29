@@ -1,5 +1,6 @@
 const overview = document.querySelector(".overview");
 const username = "ZealandMist";
+const repoList = document.querySelector(".repo-list")
 
 const getUserInfo = async function() {
   const response = await fetch(`https://api.github.com/users/${username}`);
@@ -24,5 +25,20 @@ const displayInfo = function (data) {
     </div>
   `;
   overview.append(div);
+  getRepoInfo();
 };
   
+const getRepoInfo = async function() {
+  const repoInfo = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`);
+  const repoData = await repoInfo.json();
+  displayRepos(repoData);
+};
+
+const displayRepos = function (repos) {
+  for (const repo of repos) {
+    const repoItem = document.createElement("li");
+    repoItem.classList.add("repo");
+    repoItem.innerHTML = `<h3>${repo.name}</h3>`;
+    repoList.append(repoItem);
+  }
+};
