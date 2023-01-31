@@ -3,6 +3,8 @@ const username = "ZealandMist";
 const repoList = document.querySelector(".repo-list");
 const repoSection = document.querySelector(".repos");
 const repoDataSection = document.querySelector(".repo-data");
+const backToRepo = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 const getUserInfo = async function() {
   const response = await fetch(`https://api.github.com/users/${username}`);
@@ -37,6 +39,7 @@ const getRepoInfo = async function() {
 };
 
 const displayRepos = function (repos) {
+  filterInput.classList.remove("hide");
   for (const repo of repos) {
     const repoItem = document.createElement("li");
     repoItem.classList.add("repo");
@@ -65,10 +68,11 @@ const eachRepo = async function(repoName) {
   for (const lang in languageData) {
     languages.push(lang);
   }
-
+ displayEachRepo(repoInfo, languages); 
 };
 
 const displayEachRepo = function(repoInfo, languages){
+  backToRepo.classList.remove("hide");
   repoDataSection.innerHTML = "";
   repoDataSection.classList.remove("hide");
   repoSection.classList.add("hide");
@@ -81,5 +85,25 @@ const displayEachRepo = function(repoInfo, languages){
     <p>Languages: ${languages.join(", ")}</p>
     <a class="visit" href="${repoInfo.html_url}" target="_blank" rel="noreferrer noopener">View Repo on GitHub!</a>
   `;
-  repoDataSection.append(div);
+  repoDataSection.append(divRepo);
 };
+
+backToRepo.addEventListener("click", function(){
+  repoSection.classList.remove("hide");
+  repoDataSection.classList.add("hide");
+  backToRepo.classList.add("hide");
+})
+
+filterInput.addEventListener("input", function(e){
+  const searchInput = e.target.value;
+  const repos = document.querySelectorAll(".repo");
+  const searchLower = searchInput.toLowerCase();
+  for (const repo of repos) {
+    const repoLowerCase = repo.innerText.toLowerCase();
+    if (repoLowerCase.includes(searchLower)){
+      repo.classList.remove("hide");
+    } else {
+      repo.classList.add("hide");
+    }
+  }
+});
